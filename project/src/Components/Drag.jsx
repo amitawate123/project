@@ -993,7 +993,6 @@ const DragAndDropPage = () => {
 
 
 
-
   const handleText = () => {
     setIsChatOpen(!isChatOpen); // Toggle chat box visibility
   };
