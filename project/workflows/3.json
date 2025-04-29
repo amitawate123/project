@@ -1,0 +1,261 @@
+{
+  "dtId": "3",
+  "issueName": "VMWare is not working",
+  "createdAt": "2025-04-25",
+  "owner": "Sagar",
+  "items": [
+    {
+      "id": 1745561255621,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": -17,
+      "y": 27,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "VMWare is not working",
+      "connectedTo": [
+        1745561283555
+      ],
+      "connectedBy": []
+    },
+    {
+      "id": 1745561283555,
+      "box_Id": 2,
+      "title": "Entity",
+      "description": "Define data structure and relationships",
+      "box_id": 2,
+      "x": 233,
+      "y": 50,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Restart the VM ‚Üí Is the issue resolved?",
+      "type": "",
+      "connectedTo": [
+        1745561306005
+      ],
+      "connectedBy": [
+        1745561255621
+      ]
+    },
+    {
+      "id": 1745561306005,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 518,
+      "y": 27,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745561320936,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [
+        1745561383005,
+        1745561417172
+      ],
+      "connectedBy": [
+        1745561283555
+      ]
+    },
+    {
+      "id": 1745561383005,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 794,
+      "y": 34,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Thank You",
+      "connectedTo": [],
+      "connectedBy": [
+        1745561306005
+      ]
+    },
+    {
+      "id": 1745561417172,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 796,
+      "y": 253,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Increase allocated RAM & CPU in VM settings ‚Üí Is the issue resolved?",
+      "connectedTo": [
+        1745561448773
+      ],
+      "connectedBy": [
+        1745561306005
+      ]
+    },
+    {
+      "id": 1745561448773,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": -6,
+      "y": 421,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745561454637,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [
+        1745561476456,
+        1745561490206
+      ],
+      "connectedBy": [
+        1745561417172
+      ]
+    },
+    {
+      "id": 1745561476456,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 285,
+      "y": 379,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Thank you",
+      "connectedTo": [],
+      "connectedBy": [
+        1745561448773
+      ]
+    },
+    {
+      "id": 1745561490206,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 328.88888888888886,
+      "y": 575,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Disable antivirus/firewall temporarily ‚Üí Is the issue resolved?",
+      "connectedTo": [
+        1745561532888
+      ],
+      "connectedBy": [
+        1745561448773
+      ]
+    },
+    {
+      "id": 1745561532888,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 647.7777777777777,
+      "y": 518.3333333333334,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745561540336,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [],
+      "connectedBy": [
+        1745561490206
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "startItemId": 1745561255621,
+      "endItemId": 1745561283555,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561283555,
+      "endItemId": 1745561306005,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561306005,
+      "endItemId": 1745561383005,
+      "startSide": "if-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561306005,
+      "endItemId": 1745561417172,
+      "startSide": "else-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561417172,
+      "endItemId": 1745561448773,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561448773,
+      "endItemId": 1745561476456,
+      "startSide": "if-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561448773,
+      "endItemId": 1745561490206,
+      "startSide": "else-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561490206,
+      "endItemId": 1745561532888,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    }
+  ],
+  "mouseX": 329,
+  "mouseY": 575
+}

@@ -1,0 +1,346 @@
+{
+  "dt_id": "1",
+  "issueName": "The transcation speed is slow",
+  "createdAt": "2025-04-24",
+  "items": [
+    {
+      "id": 1745490156364,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 65,
+      "y": 81,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "The transcation speed is slow",
+      "connectedTo": [
+        "Entity"
+      ],
+      "connectedBy": []
+    },
+    {
+      "id": 1745490171764,
+      "box_Id": 2,
+      "title": "Entity",
+      "description": "Define data structure and relationships",
+      "box_id": 2,
+      "x": 370,
+      "y": 113,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Is your internet Connection working?",
+      "type ": "String",
+      "connectedTo": [
+        "Confirmation"
+      ],
+      "connectedBy": [
+        "Message"
+      ]
+    },
+    {
+      "id": 1745490203198,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 669,
+      "y": 148,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745490211481,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [
+        "Message",
+        "Message"
+      ],
+      "connectedBy": [
+        "Entity"
+      ]
+    },
+    {
+      "id": 1745490225065,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 944.4444444444445,
+      "y": 110,
+      "isDraggable": true,
+      "connectedTo": [],
+      "connectedBy": [
+        "Confirmation"
+      ],
+      "variableName": "",
+      "messageToPrint": "Thank you for contacting us"
+    },
+    {
+      "id": 1745490306046,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 106.66666666666666,
+      "y": 440,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745490306611,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [
+        "Message",
+        "Message"
+      ],
+      "connectedBy": [
+        "Message"
+      ]
+    },
+    {
+      "id": 1745490343497,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 377.5,
+      "y": 475.625,
+      "isDraggable": true,
+      "connectedTo": [],
+      "connectedBy": [
+        "Confirmation"
+      ],
+      "variableName": "",
+      "messageToPrint": "Thank you for contacting us"
+    },
+    {
+      "id": 1745490422648,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 798.8888888888889,
+      "y": 576.6666666666666,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745490423579,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [
+        "Message",
+        "Message"
+      ],
+      "connectedBy": [
+        "Message"
+      ]
+    },
+    {
+      "id": 1745490487531,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 1098.75,
+      "y": 559.375,
+      "isDraggable": true,
+      "connectedTo": [],
+      "connectedBy": [
+        "Confirmation"
+      ],
+      "variableName": "",
+      "messageToPrint": "Thank you for contacting us"
+    },
+    {
+      "id": 1745490701066,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 867.5000000000008,
+      "y": 916.8750000000008,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745490702263,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [],
+      "connectedBy": [
+        "Message"
+      ]
+    },
+    {
+      "id": 1745490897218,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 1038.750000000001,
+      "y": 322.5000000000003,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Is the ATM plugged in",
+      "connectedTo": [
+        "Confirmation"
+      ],
+      "connectedBy": [
+        "Confirmation"
+      ]
+    },
+    {
+      "id": 1745490941219,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 372.50000000000034,
+      "y": 672.5000000000006,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Are there enough Notes",
+      "connectedTo": [
+        "Confirmation"
+      ],
+      "connectedBy": [
+        "Confirmation"
+      ]
+    },
+    {
+      "id": 1745490992036,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 1101.250000000001,
+      "y": 788.7500000000007,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Load Notes and try again. Working?",
+      "connectedTo": [
+        "Confirmation"
+      ],
+      "connectedBy": [
+        "Confirmation"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "startItemId": 1745490203198,
+      "endItemId": 1745490225065,
+      "startSide": "if-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490306046,
+      "endItemId": 1745490343497,
+      "startSide": "if-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490422648,
+      "endItemId": 1745490487531,
+      "startSide": "if-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490203198,
+      "endItemId": 1745490897218,
+      "startSide": "else-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490897218,
+      "endItemId": 1745490306046,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490306046,
+      "endItemId": 1745490941219,
+      "startSide": "else-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490941219,
+      "endItemId": 1745490422648,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490422648,
+      "endItemId": 1745490992036,
+      "startSide": "else-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490992036,
+      "endItemId": 1745490701066,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490156364,
+      "endItemId": 1745490171764,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745490171764,
+      "endItemId": 1745490203198,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    }
+  ],
+  "mouseX": 1101,
+  "mouseY": 789
+}

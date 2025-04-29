@@ -1,0 +1,343 @@
+{
+  "dtId": "4",
+  "issueName": "Cannot log into CRM",
+  "createdAt": "2025-04-25",
+  "owner": "Sagar",
+  "items": [
+    {
+      "id": 1745561608873,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": -13,
+      "y": 40,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Cannot log into CRM",
+      "connectedTo": [
+        1745561648590
+      ],
+      "connectedBy": []
+    },
+    {
+      "id": 1745561648590,
+      "box_Id": 2,
+      "title": "Entity",
+      "description": "Define data structure and relationships",
+      "box_id": 2,
+      "x": 253,
+      "y": 47,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Can you see this page?",
+      "type": "",
+      "connectedTo": [
+        1745561675256
+      ],
+      "connectedBy": [
+        1745561608873
+      ]
+    },
+    {
+      "id": 1745561675256,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 509,
+      "y": 32,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745561680121,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [
+        1745561689257,
+        1745561713307
+      ],
+      "connectedBy": [
+        1745561648590
+      ]
+    },
+    {
+      "id": 1745561689257,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 769,
+      "y": 25,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Thank You",
+      "connectedTo": [],
+      "connectedBy": [
+        1745561675256
+      ]
+    },
+    {
+      "id": 1745561713307,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 792,
+      "y": 276,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Do you remember your user name?",
+      "connectedTo": [
+        1745561780724
+      ],
+      "connectedBy": [
+        1745561675256
+      ]
+    },
+    {
+      "id": 1745561780724,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 34,
+      "y": 452,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745561788871,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [
+        1745561818856,
+        1745561826957
+      ],
+      "connectedBy": [
+        1745561713307
+      ]
+    },
+    {
+      "id": 1745561818856,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 390,
+      "y": 442.77777777777777,
+      "isDraggable": true,
+      "connectedTo": [],
+      "connectedBy": [
+        1745561780724
+      ]
+    },
+    {
+      "id": 1745561826957,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 391.1111111111111,
+      "y": 566.1111111111111,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "Please click on the Forgot Password link next to the Sign in button. You will receive a link on your registered email id. Did this work?",
+      "connectedTo": [
+        1745561890257
+      ],
+      "connectedBy": [
+        1745561780724
+      ]
+    },
+    {
+      "id": 1745561890257,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 700,
+      "y": 528.3333333333334,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745561894488,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [
+        1745561905958,
+        1745561929840
+      ],
+      "connectedBy": [
+        1745561826957
+      ]
+    },
+    {
+      "id": 1745561905958,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 964.4444444444445,
+      "y": 499.44444444444446,
+      "isDraggable": true,
+      "connectedTo": [],
+      "connectedBy": [
+        1745561890257
+      ]
+    },
+    {
+      "id": 1745561929840,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "box_id": 2,
+      "x": 947.7777777777777,
+      "y": 662.7777777777777,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "You have not connected using a VPN. Try connecting using a VPN. Did this work?",
+      "connectedTo": [
+        1745561946374
+      ],
+      "connectedBy": [
+        1745561890257
+      ]
+    },
+    {
+      "id": 1745561946374,
+      "box_Id": 3,
+      "title": "Confirmation",
+      "description": "Add validation and confirmation steps",
+      "box_id": 2,
+      "x": 181.25,
+      "y": 889.375,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "ifConditions": [
+        {
+          "id": 1745561954973,
+          "value": "yes"
+        }
+      ],
+      "elseIfConditions": [],
+      "elseConditions": [
+        {
+          "value": "no"
+        }
+      ],
+      "connectedTo": [],
+      "connectedBy": [
+        1745561929840
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "startItemId": 1745561608873,
+      "endItemId": 1745561648590,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561648590,
+      "endItemId": 1745561675256,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561675256,
+      "endItemId": 1745561689257,
+      "startSide": "if-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561675256,
+      "endItemId": 1745561713307,
+      "startSide": "else-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561713307,
+      "endItemId": 1745561780724,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561780724,
+      "endItemId": 1745561818856,
+      "startSide": "if-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561780724,
+      "endItemId": 1745561826957,
+      "startSide": "else-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561826957,
+      "endItemId": 1745561890257,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561890257,
+      "endItemId": 1745561905958,
+      "startSide": "if-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561890257,
+      "endItemId": 1745561929840,
+      "startSide": "else-0",
+      "endSide": "top",
+      "option": null
+    },
+    {
+      "startItemId": 1745561929840,
+      "endItemId": 1745561946374,
+      "startSide": "bottom",
+      "endSide": "top",
+      "option": null
+    }
+  ],
+  "mouseX": 181,
+  "mouseY": 889
+}

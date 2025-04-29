@@ -1,0 +1,155 @@
+/* About.module.css */
+
+/* Main container with an attractive gradient background */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #c1c6dd, #d8bec3); /* Cool gradient background */
+  background-size: 400% 400%; /* Make the gradient expansive */
+  animation: gradientAnimation 15s ease infinite; /* Smooth, animated gradient transition */
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  padding: 50px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  overflow: hidden;
+  transform: scale(1);
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  background-attachment: fixed; /* Makes the background fixed to the screen */
+}
+
+.content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'); /* Adding a soft texture */
+  opacity: 0.1;
+  z-index: -1; /* Keep the texture behind the content */
+}
+
+.content:hover {
+  transform: scale(1.02); /* Hover effect to gently enlarge the container */
+}
+
+/* Gradient animation for the background */
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Heading with bold gradient effect and smooth animation */
+.heading {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  background: linear-gradient(90deg, #6a82fb, #fc5c7d); /* Gradient text */
+  -webkit-background-clip: text;
+  color: transparent;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  animation: fadeIn 2s ease-out;
+}
+
+/* Subtle fade-in animation for text */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Paragraph styling with soft typography and spacing */
+p {
+  font-size: 22px;
+  line-height: 1.6;
+  max-width: 700px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 40px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  animation: fadeInText 2s ease-out;
+}
+
+/* Smooth fade-in effect for the paragraph */
+@keyframes fadeInText {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button styling with hover, active effects, and gradient color */
+.styled-button {
+  padding: 16px 40px;
+  background-color: #fc5c7d; /* A pink color that matches the gradient */
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0px 10px 15px rgba(252, 92, 125, 0.3);
+  transition: all 0.3s ease;
+  width: 260px;
+  margin-top: 25px;
+}
+
+/* Hover effect for the button */
+.styled-button:hover {
+  background-color: #e34970; /* Darker pink on hover */
+  transform: translateY(-5px);
+  box-shadow: 0px 15px 20px rgba(252, 92, 125, 0.4);
+}
+
+/* Active button effect when clicked */
+.styled-button:active {
+  background-color: #e34970;
+  transform: translateY(2px);
+  box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design: Adjust layout for mobile */
+@media (max-width: 768px) {
+  .content {
+    padding: 30px;
+  }
+
+  .heading {
+    font-size: 48px;
+  }
+
+  p {
+    font-size: 20px;
+    max-width: 90%;
+  }
+
+  .styled-button {
+    width: 200px;
+    font-size: 18px;
+  }
+}
