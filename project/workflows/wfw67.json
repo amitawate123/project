@@ -1,0 +1,27 @@
+{
+  "dt_id": "wfw67",
+  "issueName": "wf",
+  "createdAt": "2025-04-30",
+  "owner": "ef",
+  "items": [
+    {
+      "id": 1745997295292,
+      "box_Id": 1,
+      "container_id": 2,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "x": 399,
+      "y": 246,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "type": "",
+      "messageType": "",
+      "connectedTo": [],
+      "connectedBy": []
+    }
+  ],
+  "connections": [],
+  "mouseX": 0,
+  "mouseY": 0
+}
