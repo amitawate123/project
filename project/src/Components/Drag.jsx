@@ -7,18 +7,270 @@ import { FaUpload } from 'react-icons/fa'; // Add upload icon import
 import { FaFile } from 'react-icons/fa'; // Add file icon import
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 
+// Add a utility function for calculating condition item positions
+const calculateConditionOffsets = (item) => {
+  // Try to get the actual DOM element to measure its dimensions
+  const itemElement = document.getElementById(`item-${item.id}`);
+  
+  // Standard measurements for condition items
+  const baseHeight = itemElement ? itemElement.querySelector('.card').offsetHeight : 100; // Dynamically get card height or use default
+  const headerHeight = 25; // Height of each section header
+  const buttonHeight = 30; // Height of each condition button
+  const buttonSpacing = 5; // Spacing between buttons
+  const sectionMargin = 10; // Margin between sections
 
+  // Calculate heights for each section
+  const ifConditionsCount = item.ifConditions?.length || 0;
+  const ifSectionHeight = ifConditionsCount > 0 
+    ? headerHeight + (buttonHeight + buttonSpacing) * ifConditionsCount
+    : 0;
+
+  const elseIfConditionsCount = item.elseIfConditions?.length || 0;
+  const elseIfSectionHeight = elseIfConditionsCount > 0
+    ? headerHeight + (buttonHeight + buttonSpacing) * elseIfConditionsCount
+    : 0;
+
+  const elseConditionsCount = item.elseConditions?.length || 0;
+  const elseSectionHeight = elseConditionsCount > 0
+    ? headerHeight + (buttonHeight + buttonSpacing) * elseConditionsCount
+    : 0;
+
+  // Find the if/elseif/else sections in the DOM if possible
+  let actualIfSectionTop = baseHeight;
+  let actualElseIfSectionTop = 0;
+  let actualElseSectionTop = 0;
+  
+  if (itemElement) {
+    const ifSection = itemElement.querySelector('h4[style*="color: #4CAF50"]');
+    const elseIfSection = itemElement.querySelector('h4[style*="color: #ff9800"]');
+    const elseSection = itemElement.querySelector('h4[style*="color: #f44336"]');
+    
+    if (ifSection) {
+      const cardTop = itemElement.querySelector('.card').getBoundingClientRect().top;
+      const ifTop = ifSection.getBoundingClientRect().top;
+      actualIfSectionTop = ifTop - cardTop;
+    }
+    
+    if (elseIfSection) {
+      const cardTop = itemElement.querySelector('.card').getBoundingClientRect().top;
+      const elseIfTop = elseIfSection.getBoundingClientRect().top;
+      actualElseIfSectionTop = elseIfTop - cardTop;
+    }
+    
+    if (elseSection) {
+      const cardTop = itemElement.querySelector('.card').getBoundingClientRect().top;
+      const elseTop = elseSection.getBoundingClientRect().top;
+      actualElseSectionTop = elseTop - cardTop;
+    }
+  }
+  
+  // Use actual positions if available, otherwise calculate
+  const ifOffset = actualIfSectionTop > 0 ? actualIfSectionTop : baseHeight;
+  const elseIfOffset = actualElseIfSectionTop > 0 ? 
+    actualElseIfSectionTop : 
+    ifOffset + ifSectionHeight + (ifConditionsCount > 0 ? sectionMargin : 0);
+  const elseOffset = actualElseSectionTop > 0 ? 
+    actualElseSectionTop : 
+    elseIfOffset + elseIfSectionHeight + (elseIfConditionsCount > 0 ? sectionMargin : 0);
+
+  // Calculate exact positions for each condition
+  const positions = {
+    if: [],
+    elseIf: [],
+    else: []
+  };
+
+  // Find the actual button elements and get their positions if possible
+  if (itemElement) {
+    // Try to get if condition buttons and their positions
+    const ifButtons = itemElement.querySelectorAll('.if-condition-button');
+    Array.from(ifButtons).forEach((button, i) => {
+      const buttonRect = button.getBoundingClientRect();
+      const itemRect = itemElement.getBoundingClientRect();
+      positions.if.push({
+        top: buttonRect.top - itemRect.top + buttonRect.height / 2,
+        index: i
+      });
+    });
+    
+    // Try to get else-if condition buttons and their positions
+    const elseIfButtons = itemElement.querySelectorAll('.elseif-button');
+    Array.from(elseIfButtons).forEach((button, i) => {
+      const buttonRect = button.getBoundingClientRect();
+      const itemRect = itemElement.getBoundingClientRect();
+      positions.elseIf.push({
+        top: buttonRect.top - itemRect.top + buttonRect.height / 2,
+        index: i
+      });
+    });
+    
+    // Try to get else condition buttons and their positions
+    const elseButtons = itemElement.querySelectorAll('.else-condition-button');
+    Array.from(elseButtons).forEach((button, i) => {
+      const buttonRect = button.getBoundingClientRect();
+      const itemRect = itemElement.getBoundingClientRect();
+      positions.else.push({
+        top: buttonRect.top - itemRect.top + buttonRect.height / 2,
+        index: i
+      });
+    });
+  }
+  
+  // If DOM elements were not found, fall back to calculation
+  if (positions.if.length === 0) {
+    for (let i = 0; i < ifConditionsCount; i++) {
+      positions.if.push({
+        top: ifOffset + headerHeight + (buttonHeight + buttonSpacing) * i + buttonHeight / 2,
+        index: i
+      });
+    }
+  }
+  
+  if (positions.elseIf.length === 0) {
+    for (let i = 0; i < elseIfConditionsCount; i++) {
+      positions.elseIf.push({
+        top: elseIfOffset + headerHeight + (buttonHeight + buttonSpacing) * i + buttonHeight / 2,
+        index: i
+      });
+    }
+  }
+  
+  if (positions.else.length === 0) {
+    for (let i = 0; i < elseConditionsCount; i++) {
+      positions.else.push({
+        top: elseOffset + headerHeight + (buttonHeight + buttonSpacing) * i + buttonHeight / 2,
+        index: i
+      });
+    }
+  }
+
+  return positions;
+};
 
 // DraggableItem component
 const DraggableItem = ({ item, onDragStart, dragImageRef, onItemClick, isDraggable = true, onDragEnd, onPointClick, showPoints, scale }) => {
   const pointRadius = 5;
   const itemRef = useRef(null);
 
+  // Add a useEffect to force a redraw of connections when an item's contents change
+  useEffect(() => {
+    // This is just to trigger a component update when item properties change
+    // which will cause the parent to re-render connections
+    
+    // After component update, trigger a custom event to notify that connections may need redrawing
+    const event = new CustomEvent('itemResized', { 
+      detail: { itemId: item.id }
+    });
+    window.dispatchEvent(event);
+  }, [item.variableName, item.messageToPrint, item.ifConditions, 
+      item.elseIfConditions, item.elseConditions, item.description]);
+
+  // Set up ResizeObserver to detect when box size changes
+  useEffect(() => {
+    if (itemRef.current && item.container_id === 2) {
+      // Create a ResizeObserver to detect size changes
+      const resizeObserver = new ResizeObserver(() => {
+        // Trigger a custom event that the parent component can listen for
+        const event = new CustomEvent('itemResized', { 
+          detail: { itemId: item.id }
+        });
+        window.dispatchEvent(event);
+      });
+      
+      // Start observing the item element
+      resizeObserver.observe(itemRef.current);
+      
+      // Clean up
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+  }, [item.id, item.container_id]);
+
   const handlePointClick = (e, side, option = null) => {
     e.stopPropagation();
     onPointClick(item.id, side, option);
   };
 
+  // Calculate positions for condition points
+  const renderConditionPoints = () => {
+    if (!showPoints || item.box_Id !== 3) return null;
+    
+    // Recalculate positions each render to ensure they match the current box size
+    const positions = calculateConditionOffsets(item);
+    const pointElements = [];
+    
+    // Render if condition points
+    positions.if.forEach(pos => {
+      pointElements.push(
+        <div
+          key={`if-point-${pos.index}`}
+          className="point if-point"
+          style={{
+            position: "absolute",
+            right: -5,
+            top: pos.top,
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            backgroundColor: "#4CAF50",
+            cursor: "crosshair",
+            zIndex: 10,
+          }}
+          onClick={(e) => handlePointClick(e, `if-${pos.index}`)}
+        />
+      );
+    });
+    
+    // Render else-if condition points
+    positions.elseIf.forEach(pos => {
+      pointElements.push(
+        <div
+          key={`elseif-point-${pos.index}`}
+          className="point elseif-point"
+          style={{
+            position: "absolute",
+            right: -5,
+            top: pos.top,
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            backgroundColor: "#ff9800",
+            cursor: "crosshair",
+            zIndex: 10,
+          }}
+          onClick={(e) => handlePointClick(e, `elseif-${pos.index}`)}
+        />
+      );
+    });
+    
+    // Render else condition points
+    positions.else.forEach(pos => {
+      pointElements.push(
+        <div
+          key={`else-point-${pos.index}`}
+          className="point else-point"
+          style={{
+            position: "absolute",
+            right: -5,
+            top: pos.top,
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            backgroundColor: "#f44336",
+            cursor: "crosshair",
+            zIndex: 10,
+          }}
+          onClick={(e) => handlePointClick(e, `else-${pos.index}`)}
+        />
+      );
+    });
+    
+    return pointElements;
+  };
+
+  const isMessageFromFirstItem = item.box_Id === 1;
+  const isConfirmationItem = item.box_Id === 3;
 
   const handleDragStart = (e) => {
     e.dataTransfer.setData('text/plain', item.id.toString());
@@ -35,11 +287,6 @@ const DraggableItem = ({ item, onDragStart, dragImageRef, onItemClick, isDraggab
       setTimeout(() => document.body.removeChild(dragImage), 0);
     }
   };
-
-
-
-  const isMessageFromFirstItem = item.box_Id === 1;
-  const isConfirmationItem = item.box_Id === 3;
 
   return (
     <div
@@ -117,24 +364,6 @@ const DraggableItem = ({ item, onDragStart, dragImageRef, onItemClick, isDraggab
                       <button className="if-condition-button" style={{ margin: 0 }}>
                         if : {condition.value}
                       </button>
-                      {showPoints && (
-                        <div
-                          className={`point if-point`}
-                          style={{
-                            position: "absolute",
-                            right: -10,
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            width: 10,
-                            height: 10,
-                            borderRadius: "50%",
-                            backgroundColor: "#4CAF50",
-                            cursor: "crosshair",
-                            zIndex: 10,
-                          }}
-                          onClick={(e) => handlePointClick(e, `if-${index}`)}
-                        ></div>
-                      )}
                     </li>
                   ))}
                 </ul>
@@ -159,24 +388,6 @@ const DraggableItem = ({ item, onDragStart, dragImageRef, onItemClick, isDraggab
                       <button className="elseif-button" style={{ margin: 0 }}>
                         else if : {condition.value}
                       </button>
-                      {showPoints && (
-                        <div
-                          className={`point else-if-point`}
-                          style={{
-                            position: "absolute",
-                            right: -10,
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            width: 10,
-                            height: 10,
-                            borderRadius: "50%",
-                            backgroundColor: "#ff9800",
-                            cursor: "crosshair",
-                            zIndex: 10,
-                          }}
-                          onClick={(e) => handlePointClick(e, `elseif-${index}`)}
-                        ></div>
-                      )}
                     </li>
                   ))}
                 </ul>
@@ -202,24 +413,6 @@ const DraggableItem = ({ item, onDragStart, dragImageRef, onItemClick, isDraggab
                       >
                         else : {condition.value}
                       </button>
-                      {showPoints && (
-                        <div
-                          className={`point else-point`}
-                          style={{
-                            position: "absolute",
-                            right: -10,
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            width: 10,
-                            height: 10,
-                            borderRadius: "50%",
-                            backgroundColor: "#f44336",
-                            cursor: "crosshair",
-                            zIndex: 10,
-                          }}
-                          onClick={(e) => handlePointClick(e, `else-${index}`)}
-                        ></div>
-                      )}
                     </li>
                   ))}
                 </ul>
@@ -300,6 +493,9 @@ const DraggableItem = ({ item, onDragStart, dragImageRef, onItemClick, isDraggab
               onClick={(e) => handlePointClick(e, 'left')}
             ></div>
           )}
+          
+          {/* Render condition connection points */}
+          {renderConditionPoints()}
         </>
       )}
     </div>
@@ -312,46 +508,91 @@ const ConnectionLine = ({ startItem, endItem, startSide, endSide, items, scale, 
     const item = items.find((i) => i.id === itemId);
     if (!item) return null;
 
-    const width = 220; // Unscaled width
-    const height = 100; // Unscaled height
-    const x = item.x; // Unscaled position
-    const y = item.y; // Unscaled position
+    // Get the actual DOM element to determine its real dimensions
+    const element = document.getElementById(`item-${itemId}`);
+    
+    // Default dimensions as fallback
+    let width = 220;
+    let height = 100;
+    
+    // Get actual dimensions if element exists
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      width = rect.width / scale; // Account for scale
+      height = rect.height / scale;
+    }
 
-    // Handle condition points
+    const x = item.x;
+    const y = item.y;
+
+    // Handle condition points with more precise positioning
     if (side.startsWith('if-') || side.startsWith('elseif-') || side.startsWith('else-')) {
-      const buttonHeight = 30; // Height of condition button
-      const buttonSpacing = 5; // Spacing between buttons
-      const buttonMargin = 5; // Margin between sections
-      const headerHeight = 25; // Height of section header
-
-      let index = parseInt(side.split('-')[1]);
-      let offsetY = height; // Start after the main item height
-
-      // Add header heights and determine correct Y position based on condition type
-      if (side.startsWith('if-')) {
-        offsetY += headerHeight; // Add "If Conditions:" header height
-        offsetY += (buttonHeight + buttonSpacing) * index;
-      } else if (side.startsWith('elseif-')) {
-        // Account for if conditions section
-        const ifConditionsCount = item.ifConditions?.length || 0;
-        offsetY += headerHeight * 2; // Add both headers height
-        offsetY += (buttonHeight + buttonSpacing) * ifConditionsCount;
-        offsetY += buttonMargin; // Add margin between sections
-        offsetY += (buttonHeight + buttonSpacing) * index;
-      } else if (side.startsWith('else-')) {
-        const ifConditionsCount = item.ifConditions?.length || 0;
-        const elseIfConditionsCount = item.elseIfConditions?.length || 0;
-        offsetY += headerHeight * 3; // If, Else If, Else headers
-        offsetY += (buttonHeight + buttonSpacing) * ifConditionsCount;
-        offsetY += buttonMargin; // Margin after if section
-        offsetY += (buttonHeight + buttonSpacing) * elseIfConditionsCount;
-        offsetY += buttonMargin; // Margin after else-if section
-        offsetY += (buttonHeight + buttonSpacing) * index;
+      // Get fresh calculations of condition positions based on current DOM state
+      const positions = calculateConditionOffsets(item);
+      const index = parseInt(side.split('-')[1]);
+      
+      // Try to find the actual button in the DOM for most accurate position
+      if (element) {
+        const type = side.split('-')[0]; // 'if', 'elseif', or 'else'
+        let selector;
+        
+        if (type === 'if') {
+          selector = '.if-condition-button';
+        } else if (type === 'elseif') {
+          selector = '.elseif-button';
+        } else if (type === 'else') {
+          selector = '.else-condition-button';
+        }
+        
+        // Get all buttons of this type
+        const buttons = element.querySelectorAll(selector);
+        if (buttons && buttons[index]) {
+          const buttonRect = buttons[index].getBoundingClientRect();
+          const elementRect = element.getBoundingClientRect();
+          // Calculate position relative to the item itself
+          return {
+            x: x + width - 5, // Right side of item with small adjustment
+            y: y + (buttonRect.top - elementRect.top + buttonRect.height / 2) / scale // Account for scale
+          };
+        }
       }
-
+      
+      // Fall back to calculated positions if buttons can't be found in DOM
+      if (side.startsWith('if-') && positions.if[index]) {
+        return {
+          x: x + width - 5, // Right side of the box with small adjustment
+          y: y + positions.if[index].top
+        };
+      } else if (side.startsWith('elseif-') && positions.elseIf[index]) {
+        return {
+          x: x + width - 5,
+          y: y + positions.elseIf[index].top
+        };
+      } else if (side.startsWith('else-') && positions.else[index]) {
+        return {
+          x: x + width - 5,
+          y: y + positions.else[index].top
+        };
+      }
+      
+      // Final fallback to approximation if no other method works
+      const buttonHeight = 30;
+      let offsetY = height;
+      
+      if (side.startsWith('if-')) {
+        offsetY += 25 + buttonHeight * index;
+      } else if (side.startsWith('elseif-')) {
+        const ifCount = item.ifConditions?.length || 0;
+        offsetY += 50 + buttonHeight * (ifCount + index);
+      } else if (side.startsWith('else-')) {
+        const ifCount = item.ifConditions?.length || 0;
+        const elseIfCount = item.elseIfConditions?.length || 0;
+        offsetY += 75 + buttonHeight * (ifCount + elseIfCount + index);
+      }
+      
       return {
-        x: x + width, // Points on the right side
-        y: y + offsetY + buttonHeight / 2 // Center of the button
+        x: x + width - 5,
+        y: y + offsetY
       };
     }
 
@@ -375,33 +616,50 @@ const ConnectionLine = ({ startItem, endItem, startSide, endSide, items, scale, 
 
   if (!startPos || !endPos) return null;
 
+  // Enhanced path generation for condition connections
   const generatePath = () => {
     const dx = endPos.x - startPos.x;
     const dy = endPos.y - startPos.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    const controlPointDistance = Math.min(distance / 2, 150);
+    // Adjust control point distance based on the distance between points
+    const controlPointDistance = Math.min(distance / 2, Math.max(50, distance / 3));
 
     let cp1x = startPos.x;
     let cp1y = startPos.y;
     let cp2x = endPos.x;
     let cp2y = endPos.y;
 
-    // Handle condition points (if, else if, else)
+    // Special handling for condition points
     if (startSide.startsWith('if-') || startSide.startsWith('elseif-') || startSide.startsWith('else-')) {
-      // For condition points, create a smooth horizontal curve first
-      cp1x = startPos.x + controlPointDistance;
+      // For condition points, extend the path horizontally first
+      cp1x = startPos.x + Math.min(80, distance / 3);
       cp1y = startPos.y;
 
-      // Then adjust the second control point based on the target position
+      // Create a smooth curve towards the target
+      // Calculate how far to extend based on relative position of target
+      const horizontalDistance = Math.abs(dx);
+      
       if (endPos.x > startPos.x) {
-        cp2x = endPos.x - controlPointDistance;
+        // Target is to the right
+        cp2x = endPos.x - Math.min(60, horizontalDistance / 3);
       } else {
-        cp2x = endPos.x + controlPointDistance;
+        // Target is to the left - create a wider curve
+        cp2x = endPos.x + Math.min(60, horizontalDistance / 3);
       }
-      cp2y = endPos.y;
+      
+      // Adjust vertical component of the curve based on vertical distance
+      if (Math.abs(dy) > 100) {
+        // For larger vertical distances, create a smoother vertical transition
+        const verticalFactor = Math.min(Math.abs(dy) / 3, 80);
+        cp1y = startPos.y + (Math.sign(dy) * verticalFactor * 0.3);
+        cp2y = endPos.y - (Math.sign(dy) * verticalFactor * 0.7);
+      } else {
+        // For smaller vertical distances
+        cp2y = endPos.y;
+      }
     } else {
-      // For regular points, use the existing logic
+      // For regular points, use more adaptive control point positioning
       switch (startSide) {
         case "right":
           cp1x = startPos.x + controlPointDistance;
@@ -420,17 +678,45 @@ const ConnectionLine = ({ startItem, endItem, startSide, endSide, items, scale, 
       // Adjust end control point
       switch (endSide) {
         case "right":
-          cp2x = endPos.x + controlPointDistance;
+          cp2x = endPos.x + controlPointDistance/2;
           break;
         case "left":
-          cp2x = endPos.x - controlPointDistance;
+          cp2x = endPos.x - controlPointDistance/2;
           break;
         case "bottom":
-          cp2y = endPos.y + controlPointDistance;
+          cp2y = endPos.y + controlPointDistance/2;
           break;
         case "top":
-          cp2y = endPos.y - controlPointDistance;
+          cp2y = endPos.y - controlPointDistance/2;
           break;
+      }
+      
+      // Further refine the curve for better appearance
+      // If both points are on the same side (e.g. both bottom)
+      if (startSide === endSide) {
+        if (startSide === 'bottom' || startSide === 'top') {
+          // Create a wider horizontal curve
+          const midX = (startPos.x + endPos.x) / 2;
+          const offset = Math.min(Math.abs(dx) * 0.5, 100) * Math.sign(dx);
+          
+          cp1x = midX - offset;
+          cp2x = midX + offset;
+          
+          const verticalOffset = controlPointDistance * (startSide === 'bottom' ? 1 : -1);
+          cp1y = startPos.y + verticalOffset;
+          cp2y = endPos.y + verticalOffset;
+        } else if (startSide === 'left' || startSide === 'right') {
+          // Create a wider vertical curve
+          const midY = (startPos.y + endPos.y) / 2;
+          const offset = Math.min(Math.abs(dy) * 0.5, 100) * Math.sign(dy);
+          
+          cp1y = midY - offset;
+          cp2y = midY + offset;
+          
+          const horizontalOffset = controlPointDistance * (startSide === 'right' ? 1 : -1);
+          cp1x = startPos.x + horizontalOffset;
+          cp2x = endPos.x + horizontalOffset;
+        }
       }
     }
 
@@ -533,6 +819,52 @@ const DropContainer = ({ id, title, mouseX, mouseY, children, onDrop, onDragOver
   );
 };
 
+// Add this function before the DragAndDropPage component
+const formatWorkflowData = (items, connections, dtId, issueName) => {
+  // Create a map of items for easy lookup
+  const itemsMap = new Map(items.map(item => [item.id, item]));
+
+  // Format the workflow data
+  const workflowData = {
+    dt_id: dtId,
+    issue_name: issueName,
+    nodes: items
+      .filter(item => item.container_id === 2)
+      .map(item => ({
+        id: item.id,
+        type: item.title.toLowerCase(),
+        position: { x: item.x, y: item.y },
+        data: {
+          title: item.title,
+          description: item.description,
+          variableName: item.variableName || '',
+          messageToPrint: item.messageToPrint || '',
+          type: item.type || '',
+          messageType: item.messageType || '',
+          ifConditions: item.ifConditions || [],
+          elseIfConditions: item.elseIfConditions || [],
+          elseConditions: item.elseConditions || [],
+          apiUrl: item.apiUrl || '',
+          apiMethod: item.apiMethod || 'GET',
+          headers: item.headers || [],
+          bodyContent: item.bodyContent || ''
+        }
+      })),
+    edges: connections.map(conn => ({
+      id: `${conn.startItemId}-${conn.endItemId}`,
+      source: conn.startItemId.toString(),
+      target: conn.endItemId.toString(),
+      sourceHandle: conn.startSide,
+      targetHandle: conn.endSide,
+      type: conn.startSide.startsWith('if-') ? 'if' :
+            conn.startSide.startsWith('elseif-') ? 'elseif' :
+            conn.startSide.startsWith('else-') ? 'else' : 'default'
+    }))
+  };
+
+  return workflowData;
+};
+
 // Main page component with 3 parts
 const DragAndDropPage = () => {
   const navigate = useNavigate();
@@ -559,7 +891,7 @@ const DragAndDropPage = () => {
     const fetchWorkflowData = async () => {
       if (dtId) {
         try {
-          const response = await fetch(`http://192.168.10.127:2000/api/workflow/${dtId}`);
+          const response = await fetch(`http://0.0.0.0:2000/api/workflow/${dtId}`);
           if (response.ok) {
             const data = await response.json();
             // Update items and connections with saved data
@@ -634,6 +966,8 @@ const DragAndDropPage = () => {
   const [showUploadPopup, setShowUploadPopup] = useState(false); // Add this state
   const [mediaFiles, setMediaFiles] = useState([]); // Add state for media files
   const [selectedFile, setSelectedFile] = useState(null); // Add state for selected file
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
 
 
   useEffect(() => {
@@ -695,204 +1029,181 @@ const DragAndDropPage = () => {
     );
   };
 
+  
 
 
 
 
-  const handleSave = () => {
+
+  const handleSave = async () => {
     if (dtId) {
-      // First check if DT ID has changed
-      if (editableDtId !== dtId) {
-        // If DT ID has changed, we need to:
-        // 1. Delete the old workflow
-        // 2. Create a new workflow with the new DT ID
-        fetch(`http://192.168.10.127:2000/api/data/${dtId}`, {
-          method: 'DELETE',
-        })
-          .then(() => {
-            // Create new data entry
-            return fetch('http://192.168.10.127:2000/api/data', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                dtId: editableDtId,
-                issueName: editableIssueName,
-                createdAt: new Date().toISOString().split('T')[0],
-                owner: location.state?.owner || ''
-              }),
-            });
-          })
-          .then(() => {
-            // Save workflow data with new DT ID
-            return fetch(`http://192.168.10.127:2000/api/workflow/${editableDtId}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                dt_id: editableDtId,
-                issueName: editableIssueName,
-                createdAt: new Date().toISOString().split('T')[0],
-                owner: location.state?.owner || '',
-                items: items.filter(item => item.container_id === 2).map(item => {
-                  const connectedTo = connections
-                    .filter(conn => conn.startItemId === item.id)
-                    .map(conn => conn.endItemId);
-
-                  const connectedBy = connections
-                    .filter(conn => conn.endItemId === item.id)
-                    .map(conn => conn.startItemId);
-
-                  const itemData = {
-                    id: item.id,
-                    box_Id: item.box_Id,
-                    container_id: item.container_id,
-                    title: item.title,
-                    description: item.description,
-                    x: item.x,
-                    y: item.y,
-                    isDraggable: item.isDraggable,
-                    variableName: item.variableName || '',
-                    messageToPrint: item.messageToPrint || '',
-                    type: item.title === 'Entity' ? (item.type || '') : '',
-                    messageType: item.title === 'Message' ? (item.messageType || '') : '',
-                    connectedTo,
-                    connectedBy
-                  };
-
-                  if (item.box_Id === 3) {
-                    itemData.ifConditions = item.ifConditions || [];
-                    itemData.elseIfConditions = item.elseIfConditions || [];
-                    itemData.elseConditions = item.elseConditions || [];
-                  }
-
-                  if (item.box_Id === 4) {
-                    itemData.apiUrl = item.apiUrl || '';
-                    itemData.apiMethod = item.apiMethod || 'GET';
-                    itemData.headers = item.headers || [];
-                    itemData.bodyContent = item.bodyContent || '';
-                  }
-
-                  return itemData;
-                }),
-                connections: connections.map(conn => ({
-                  startItemId: conn.startItemId,
-                  endItemId: conn.endItemId,
-                  startSide: conn.startSide,
-                  endSide: conn.endSide,
-                  option: conn.option
-                })),
-                mouseX,
-                mouseY
-              }),
-            });
-          })
-          .then(response => {
-            if (response.ok) {
-              alert("Workflow saved successfully!");
-              navigate(`/drag/${editableDtId}`, { state: { issueName: editableIssueName, owner: location.state?.owner } });
-            } else {
-              throw new Error('Failed to save workflow');
-            }
-          })
-          .catch(error => {
-            console.error('Error saving workflow:', error);
-            alert("Error saving workflow. Please try again.");
+      try {
+        // First check if DT ID has changed
+        if (editableDtId !== dtId) {
+          // Delete old workflow
+          await fetch(`http://0.0.0.0:2000/api/data/${dtId}`, {
+            method: 'DELETE',
           });
-      } else {
-        // If DT ID hasn't changed, just update the existing workflow
-        fetch(`http://192.168.10.127:2000/api/data/${dtId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            dtId: editableDtId,
-            issueName: editableIssueName,
-            createdAt: new Date().toISOString().split('T')[0],
-            owner: location.state?.owner || ''
-          }),
-        })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Failed to update data table');
-            }
-            return fetch(`http://192.168.10.127:2000/api/workflow/${dtId}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                dt_id: dtId,
-                issueName: editableIssueName,
-                createdAt: new Date().toISOString().split('T')[0],
-                owner: location.state?.owner || '',
-                items: items.filter(item => item.container_id === 2).map(item => {
-                  const connectedTo = connections
-                    .filter(conn => conn.startItemId === item.id)
-                    .map(conn => conn.endItemId);
 
-                  const connectedBy = connections
-                    .filter(conn => conn.endItemId === item.id)
-                    .map(conn => conn.startItemId);
-
-                  const itemData = {
-                    id: item.id,
-                    box_Id: item.box_Id,
-                    container_id: item.container_id,
-                    title: item.title,
-                    description: item.description,
-                    x: item.x,
-                    y: item.y,
-                    isDraggable: item.isDraggable,
-                    variableName: item.variableName || '',
-                    messageToPrint: item.messageToPrint || '',
-                    type: item.title === 'Entity' ? (item.type || '') : '',
-                    messageType: item.title === 'Message' ? (item.messageType || '') : '',
-                    connectedTo,
-                    connectedBy
-                  };
-
-                  if (item.box_Id === 3) {
-                    itemData.ifConditions = item.ifConditions || [];
-                    itemData.elseIfConditions = item.elseIfConditions || [];
-                    itemData.elseConditions = item.elseConditions || [];
-                  }
-
-                  if (item.box_Id === 4) {
-                    itemData.apiUrl = item.apiUrl || '';
-                    itemData.apiMethod = item.apiMethod || 'GET';
-                    itemData.headers = item.headers || [];
-                    itemData.bodyContent = item.bodyContent || '';
-                  }
-
-                  return itemData;
-                }),
-                connections: connections.map(conn => ({
-                  startItemId: conn.startItemId,
-                  endItemId: conn.endItemId,
-                  startSide: conn.startSide,
-                  endSide: conn.endSide,
-                  option: conn.option
-                })),
-                mouseX,
-                mouseY
-              }),
-            });
-          })
-          .then(response => {
-            if (response.ok) {
-              alert("Workflow saved successfully!");
-            } else {
-              throw new Error('Failed to save workflow');
-            }
-          })
-          .catch(error => {
-            console.error('Error saving workflow:', error);
-            alert("Error saving workflow. Please try again.");
+          // Create new data entry
+          await fetch('http://0.0.0.0:2000/api/data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              dtId: editableDtId,
+              issueName: editableIssueName,
+              createdAt: new Date().toISOString().split('T')[0],
+              owner: location.state?.owner || ''
+            }),
           });
+
+          // Save workflow data with new DT ID
+          const response = await fetch(`http://0.0.0.0:2000/api/workflow/${editableDtId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              dt_id: editableDtId,
+              issueName: editableIssueName,
+              createdAt: new Date().toISOString().split('T')[0],
+              owner: location.state?.owner || '',
+              items: items.filter(item => item.container_id === 2).map(item => ({
+                id: item.id,
+                box_Id: item.box_Id,
+                container_id: item.container_id,
+                title: item.title,
+                description: item.description,
+                x: item.x,
+                y: item.y,
+                isDraggable: item.isDraggable,
+                variableName: item.variableName || '',
+                messageToPrint: item.messageToPrint || '',
+                type: item.title === 'Entity' ? (item.type || '') : '',
+                messageType: item.title === 'Message' ? (item.messageType || '') : '',
+                ifConditions: item.ifConditions || [],
+                elseIfConditions: item.elseIfConditions || [],
+                elseConditions: item.elseConditions || [],
+                apiUrl: item.apiUrl || '',
+                apiMethod: item.apiMethod || 'GET',
+                headers: item.headers || [],
+                bodyContent: item.bodyContent || ''
+              })),
+              connections: connections.map(conn => ({
+                startItemId: conn.startItemId,
+                endItemId: conn.endItemId,
+                startSide: conn.startSide,
+                endSide: conn.endSide,
+                option: conn.option
+              })),
+              mouseX,
+              mouseY
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to save workflow');
+          }
+
+          // Format and send data to external API
+          const workflowData = formatWorkflowData(items, connections, editableDtId, editableIssueName);
+          const apiResponse = await fetch('https://api.goapl.com/json/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(workflowData),
+          });
+
+          if (!apiResponse.ok) {
+            throw new Error('Failed to send data to external API');
+          }
+
+          alert("Workflow saved and sent to API successfully!");
+          navigate(`/drag/${editableDtId}`, { state: { issueName: editableIssueName, owner: location.state?.owner } });
+        } else {
+          // Update existing workflow
+          await fetch(`http://0.0.0.0:2000/api/data/${dtId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              dtId: editableDtId,
+              issueName: editableIssueName,
+              createdAt: new Date().toISOString().split('T')[0],
+              owner: location.state?.owner || ''
+            }),
+          });
+
+          const response = await fetch(`http://0.0.0.0:2000/api/workflow/${dtId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              dt_id: dtId,
+              issueName: editableIssueName,
+              createdAt: new Date().toISOString().split('T')[0],
+              owner: location.state?.owner || '',
+              items: items.filter(item => item.container_id === 2).map(item => ({
+                id: item.id,
+                box_Id: item.box_Id,
+                container_id: item.container_id,
+                title: item.title,
+                description: item.description,
+                x: item.x,
+                y: item.y,
+                isDraggable: item.isDraggable,
+                variableName: item.variableName || '',
+                messageToPrint: item.messageToPrint || '',
+                type: item.title === 'Entity' ? (item.type || '') : '',
+                messageType: item.title === 'Message' ? (item.messageType || '') : '',
+                ifConditions: item.ifConditions || [],
+                elseIfConditions: item.elseIfConditions || [],
+                elseConditions: item.elseConditions || [],
+                apiUrl: item.apiUrl || '',
+                apiMethod: item.apiMethod || 'GET',
+                headers: item.headers || [],
+                bodyContent: item.bodyContent || ''
+              })),
+              connections: connections.map(conn => ({
+                startItemId: conn.startItemId,
+                endItemId: conn.endItemId,
+                startSide: conn.startSide,
+                endSide: conn.endSide,
+                option: conn.option
+              })),
+              mouseX,
+              mouseY
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to save workflow');
+          }
+
+          // Format and send data to external API
+          const workflowData = formatWorkflowData(items, connections, dtId, editableIssueName);
+          const apiResponse = await fetch('https://api.goapl.com/json/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(workflowData),
+          });
+
+          if (!apiResponse.ok) {
+            throw new Error('Failed to send data to external API');
+          }
+
+          alert("Workflow saved and sent to API successfully!");
+        }
+      } catch (error) {
+        console.error('Error saving workflow:', error);
+        alert("Error saving workflow. Please try again.");
       }
     } else {
       setIsPopupOpen(true);
@@ -908,7 +1219,7 @@ const DragAndDropPage = () => {
 
     try { 
       // First check if DT ID already exists
-      const checkResponse = await fetch(`http://192.168.10.127:2000/api/data/${formData.dtId}`);
+      const checkResponse = await fetch(`http://0.0.0.0:2000/api/data/${formData.dtId}`);
 
       if (checkResponse.ok) {
         // DT ID exists, show alert and return
@@ -917,7 +1228,7 @@ const DragAndDropPage = () => {
       }
 
       // DT ID doesn't exist, create new data
-      const createResponse = await fetch('http://192.168.10.127:2000/api/data', {
+      const createResponse = await fetch('http://0.0.0.0:2000/api/data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -963,7 +1274,7 @@ const DragAndDropPage = () => {
         mouseY
       };
 
-      const workflowResponse = await fetch(`http://192.168.10.127:2000/api/workflow/${formData.dtId}`, {
+      const workflowResponse = await fetch(`http://0.0.0.0:2000/api/workflow/${formData.dtId}`, {
         method: 'POST', 
         headers: {
           'Content-Type': 'application/json',
@@ -1036,7 +1347,7 @@ const DragAndDropPage = () => {
   };
 
 
-  // Update handleDragEnd to store positions
+  // Update handleDragEnd to store positions and trigger connection updates
   const handleDragEnd = (e) => {
     const draggedItem = items.find((item) => item.id === parseInt(e.target.id.split('-')[1]));
     if (!draggedItem || draggedItem.container_id !== 2) return;
@@ -1062,6 +1373,12 @@ const DragAndDropPage = () => {
     // Update axes
     setMouseX(Math.round(newX));
     setMouseY(Math.round(newY));
+    
+    // Force connections to update - do this after a small delay to ensure 
+    // the item has fully rendered in its new position
+    setTimeout(() => {
+      setConnections(prevConnections => [...prevConnections]);
+    }, 10);
   };
 
 
@@ -1261,6 +1578,20 @@ const DragAndDropPage = () => {
       setItems(updatedItems);
       setSelectedItem(null);
       setIsSidebarOpen(false);
+      
+      // If this was a Confirmation item, trigger a redraw of connections after a brief delay
+      // to ensure the points are properly positioned after the item is updated
+      if (selectedItem.box_Id === 3) {
+        setTimeout(() => {
+          setConnections(prev => [...prev]);
+          
+          // Dispatch the itemResized event to ensure connections update
+          const event = new CustomEvent('itemResized', { 
+            detail: { itemId: selectedItem.id }
+          });
+          window.dispatchEvent(event);
+        }, 100);
+      }
     }
   };
 
@@ -1312,19 +1643,25 @@ const DragAndDropPage = () => {
       if (!connectionExists) {
         // Validate connection based on condition types
         if (startSide.startsWith('if-') || startSide.startsWith('elseif-') || startSide.startsWith('else-')) {
-          // Only allow connections from condition points to other items
-          setConnections((prevConnections) => [
-            ...prevConnections,
-            {
-              startItemId,
-              endItemId,
-              startSide,
-              endSide,
-              option: startOption,
-            },
-          ]);
+          // Only allow connections from condition points to non-condition points
+          // This prevents connecting conditions to conditions which can get messy
+          if (!endSide.startsWith('if-') && !endSide.startsWith('elseif-') && !endSide.startsWith('else-')) {
+            setConnections((prevConnections) => [
+              ...prevConnections,
+              {
+                startItemId,
+                endItemId,
+                startSide,
+                endSide,
+                option: startOption,
+              },
+            ]);
+          }
+        } else if (endSide.startsWith('if-') || endSide.startsWith('elseif-') || endSide.startsWith('else-')) {
+          // Don't allow connections TO condition points from regular points
+          // Condition points should only be outgoing, not incoming
         } else {
-          // Regular point connections
+          // Regular point connections (neither end is a condition)
           setConnections((prevConnections) => [
             ...prevConnections,
             {
@@ -1432,6 +1769,27 @@ const DragAndDropPage = () => {
       setSelectedFile(null);
     }
   };
+
+  // Add this useEffect to handle item resize events
+  useEffect(() => {
+    const handleItemResize = (event) => {
+      // Force a re-render when an item is resized
+      // This will redraw the connections properly
+      setConnections(prev => [...prev]);
+      
+      // Also schedule another redraw after a short delay
+      // This helps with condition points that may take time to fully render
+      setTimeout(() => {
+        setConnections(prev => [...prev]);
+      }, 50);
+    };
+    
+    window.addEventListener('itemResized', handleItemResize);
+    
+    return () => {
+      window.removeEventListener('itemResized', handleItemResize);
+    };
+  }, []);
 
   return (
     <div style={{ position: 'relative', height: '100vh' }}>
@@ -2261,6 +2619,8 @@ const DragAndDropPage = () => {
 
 
 
+
+
         {/* Chat Box - Opens when "Text" button is clicked */}
         <div className={`chat-box ${isChatOpen ? 'open' : ''}`}>
           <div className="chat-header">
@@ -2268,8 +2628,7 @@ const DragAndDropPage = () => {
             <button className="close-chat" onClick={() => setIsChatOpen(false)}>X</button>
           </div>
           <div className="chat-content">
-            <div className="chat-message bot">Hello! How can I assist you?</div>
-            <div className="chat-message user">I need help with my workflow.</div>
+           
           </div>
           <div className="chat-footer">
             <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '10px', position: 'relative' }}>
@@ -2319,7 +2678,7 @@ const DragAndDropPage = () => {
                 </div>
               )}
               <input type="text" placeholder="Type a message..." className="chat-input" style={{ flex: 1 }} />
-              <button className="send-button">Send</button>
+              <button className="send-button" onClick={SendMessage}>Send</button>
             </div>
           </div>
         </div>

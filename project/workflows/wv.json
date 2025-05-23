@@ -1,0 +1,29 @@
+{
+  "dtId": "wv",
+  "issueName": "efg",
+  "createdAt": "2025-05-08",
+  "owner": "rf",
+  "items": [
+    {
+      "id": 1747998661458,
+      "box_Id": 1,
+      "title": "Message",
+      "description": "Create and configure message flows",
+      "container_id": 2,
+      "x": 339,
+      "y": 340,
+      "isDraggable": true,
+      "variableName": "",
+      "messageToPrint": "",
+      "type": "",
+      "ifConditions": [],
+      "elseIfConditions": [],
+      "elseConditions": [],
+      "connectedTo": [],
+      "connectedBy": []
+    }
+  ],
+  "connections": [],
+  "mouseX": 0,
+  "mouseY": 0
+}

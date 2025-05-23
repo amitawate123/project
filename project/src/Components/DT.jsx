@@ -13,7 +13,7 @@ function DataTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.10.127:2000/api/data');
+        const response = await fetch('http://0.0.0.0:2000/api/data');
         const data = await response.json();
         // Sort data by DT ID in ascending order
         const sortedData = data.sort((a, b) => {
@@ -42,7 +42,7 @@ function DataTable() {
   const saveEdit = async (id) => {
     try {
       const rowToUpdate = rows.find(row => row.id === id);
-      const response = await fetch(`http://192.168.10.127:2000/api/data/${rowToUpdate.dtId}`, {
+      const response = await fetch(`http://0.0.0.0:2000/api/data/${rowToUpdate.dtId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ function DataTable() {
   const deleteRow = async (id) => {
     try {
       const rowToDelete = rows.find(row => row.id === id);
-      const response = await fetch(`http://192.168.10.127:2000/api/data/${rowToDelete.dtId}`, {
+      const response = await fetch(`http://0.0.0.0:2000/api/data/${rowToDelete.dtId}`, {
         method: 'DELETE',
       });
 
@@ -118,8 +118,8 @@ function DataTable() {
 
       <div>
         <button className="button newPageButton" onClick={goToNextPage}>Add DT</button>
-        <button className='Add-Flow'>Add Flow</button>
-        <button className='End-Flow'>End Flow</button>
+        {/* <button className='Add-Flow'>Add Flow</button>
+        <button className='End-Flow'>End Flow</button> */}
       </div>
       <br />
 

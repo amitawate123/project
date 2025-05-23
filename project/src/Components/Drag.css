@@ -557,18 +557,7 @@
   padding: 5px;
 }
 
-.save-btn {
-  background: blue;
-  color: white;
-  border: none;
-  padding: 5px;
-  cursor: pointer;
-  border-radius: 3px;
-}
 
-.save-btn:hover {
-  background: darkblue;
-}
 
 .delete-btn {
   background: red;
@@ -606,30 +595,18 @@
 }
 
 
-.save-button, .text-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.save-button:hover, .text-button:hover {
-  background-color: #0056b3;
-}
-
 
 .save-button, .text-button {
-  background-color: #007bff;
+  background: linear-gradient(135deg, #e69884, #db8270); /* green gradient */
   color: white;
+  font-size: 1rem;
+  padding: 0.6rem 1.4rem;
   border: none;
-  padding: 8px 12px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 5px;
-  display: inline-block; /* Ensures button is visible */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .text-button {
@@ -638,7 +615,14 @@
 }
 
 .save-button:hover, .text-button:hover {
-  background-color: #0056b3;
+  background: linear-gradient(135deg, #cf370d, #de6757);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.save-button:active, .text-button:active{
+  transform: scale(0.97);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* Chat Box */

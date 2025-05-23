@@ -42,7 +42,7 @@ function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-form-container">
-        <h1>Welcome Back</h1>
+        <h1>Welcome </h1>
         <p className="login-subtitle">Sign in to your account</p>
 
         {errorMessage && <div className="error-message">{errorMessage}</div>}

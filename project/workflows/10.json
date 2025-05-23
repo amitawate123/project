@@ -1,24 +1,29 @@
 {
-  "dt_id": "wfw67",
-  "issueName": "wf",
-  "createdAt": "2025-04-30",
-  "owner": "ef",
+  "dt_id": "10",
+  "issueName": "testing",
+  "createdAt": "2025-05-23",
+  "owner": "Sagar",
   "items": [
     {
-      "id": 1745997295292,
+      "id": 1748000665729,
       "box_Id": 1,
       "container_id": 2,
       "title": "Message",
       "description": "Create and configure message flows",
-      "x": 399,
-      "y": 246,
+      "x": 306,
+      "y": 194,
       "isDraggable": true,
       "variableName": "",
       "messageToPrint": "",
       "type": "",
       "messageType": "",
-      "connectedTo": [],
-      "connectedBy": []
+      "ifConditions": [],
+      "elseIfConditions": [],
+      "elseConditions": [],
+      "apiUrl": "",
+      "apiMethod": "GET",
+      "headers": [],
+      "bodyContent": ""
     }
   ],
   "connections": [],
